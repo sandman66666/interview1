@@ -1,0 +1,359 @@
+Interview Platform Product Specification
+
+Product Overview
+
+A self-service video interview platform that enables asynchronous interviews using an AI avatar as the interviewer. Users receive a unique URL to access their interview session, where they can respond to pre-set questions through video recordings and return to continue or revise their answers at any time.
+
+Core Features
+
+Interview Access & Setup
+
+
+
+
+
+Secure, unique URL generation for each interview session
+
+
+
+No login required - all access through unique URLs
+
+
+
+Automatic session restoration when returning to continue interview
+
+Interview Interface
+
+
+
+
+
+Split-screen layout:
+
+
+
+Left side: AI avatar powered by D-ID presenting questions
+
+
+
+Right side: User's video recording space
+
+
+
+Professional, Zoom-like video interface
+
+
+
+Clear progress indicator showing current question and overall completion
+
+Recording Experience
+
+
+
+
+
+One question at a time presentation
+
+
+
+"Start Recording" button to begin each answer
+
+
+
+Live video preview while recording
+
+
+
+Post-recording options:
+
+
+
+Preview recorded answer
+
+
+
+Accept and move to next question
+
+
+
+Re-record current answer
+
+Response Management
+
+
+
+
+
+Automatic saving of all recordings
+
+
+
+Ability to return and re-record any previous answer
+
+
+
+Progress saving after each completed question
+
+
+
+Automatic transcription of all video responses to text
+
+Admin Features
+
+
+
+
+
+Question management interface:
+
+
+
+Add new questions
+
+
+
+Remove existing questions
+
+
+
+Reorder questions
+
+
+
+Edit question text
+
+
+
+Access to completed interviews
+
+
+
+View both video responses and transcripts
+
+User Flow
+
+
+
+
+
+Interview Setup
+
+
+
+
+
+Admin creates question set
+
+
+
+
+
+System generates unique interview URL
+
+
+
+
+
+URL shared with interviewee
+
+
+
+
+
+Interview Start
+
+
+
+
+
+User accesses unique URL
+
+
+
+
+
+Welcome screen with instructions
+
+
+
+
+
+System check for camera/microphone
+
+
+
+
+
+Per Question Flow
+
+
+
+
+
+AI avatar presents question
+
+
+
+
+
+User clicks "Start Recording" when ready
+
+
+
+
+
+User records answer
+
+
+
+
+
+User reviews recording
+
+
+
+
+
+User chooses to accept or re-record
+
+
+
+
+
+Progress saves automatically
+
+
+
+
+
+Session Management
+
+
+
+
+
+User can exit at any time
+
+
+
+
+
+Return link provided
+
+
+
+
+
+Progress maintained between sessions
+
+
+
+
+
+Completion
+
+
+
+
+
+Final review option of all answers
+
+
+
+
+
+Completion confirmation
+
+
+
+
+
+Option to revise any answer
+
+Technical Requirements
+
+Video Specifications
+
+
+
+
+
+Maximum recording length per answer: 5 minutes
+
+
+
+Video format: MP4
+
+
+
+Resolution: 720p minimum
+
+
+
+Audio: Clear mono channel
+
+Performance Standards
+
+
+
+
+
+Maximum 2-second delay for avatar response
+
+
+
+Under 3-second load time for video playback
+
+
+
+Real-time video preview with <500ms latency
+
+
+
+Transcription completion within 5 minutes of recording
+
+Compatibility
+
+
+
+
+
+Modern web browsers (Chrome, Firefox, Safari, Edge)
+
+
+
+Desktop and laptop focused
+
+
+
+Minimum connection speed: 2Mbps upload/download
+
+Future Enhancements (Phase 2)
+
+
+
+
+
+Custom avatar selection
+
+
+
+Multiple question sets per URL
+
+
+
+Team collaboration features
+
+
+
+Analytics dashboard
+
+
+
+Mobile optimization
+
+
+
+Branded interview experiences
+
+Would you like me to expand on any of these sections or move forward with implementation details for a specific feature?

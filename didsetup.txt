@@ -1,0 +1,1183 @@
+Example #1: Default Call
+POST https://api.d-id.com/talks | Create a talk
+
+Request
+Response
+
+{
+    "source_url": "https://myhost.com/image.jpg",
+    "script": {
+        "type": "text",
+        "input": "Hello world!"
+    }
+}
+
+GET https://api.d-id.com/talks/<id> | Get a specific talk
+
+Request
+Response
+
+Empty request body
+See the Response tab
+
+The output video is located in the result_url field.
+
+📘
+Note
+
+The output video is ready only when "status": "done"
+
+status field lifecycle:
+
+"status": "created"	When posting a new talks request
+"status": "started"	When starting the video processing
+"status": "done"	When the video is ready
+
+✴️ Example #2: Webhooks
+Simply create an endpoint on your side and add it in the webhook field.
+Then the webhook endpoint will be triggered with the same response body once the video is ready.
+
+POST https://api.d-id.com/talks | Create a talk
+
+Request
+Response
+Webhook Response
+
+{
+    "source_url": "https://myhost.com/image.jpg",
+    "script": {
+        "type": "text",
+        "input": "Hello world!"
+    },
+    "webhook": "https://myhost.com/webhook"
+}
+
+
+✴️ Example #3: Stitch
+In order to get an output video that contains the entire input image context and not only a cropped video around the face area, simply use "stitch:" true
+
+POST https://api.d-id.com/talks | Create a talk
+
+Request
+Response
+
+{
+    "source_url": "https://myhost.com/image.jpg",
+    "script": {
+        "type": "text",
+        "input": "Hello world!"
+    },
+    "config": {
+        "stitch": true
+    }
+}
+
+✴️ Example #4: Text to Speech
+Choose different voices, languages, and styles. See the supported Text-to-Speech providers' voices list
+
+POST https://api.d-id.com/talks | Create a talk
+
+Request
+Response
+
+{
+    "source_url": "https://myhost.com/image.jpg",
+    "script": {
+        "type": "text",
+        "input": "Hello world!",
+        "provider": {
+            "type": "microsoft",
+            "voice_id": "en-US-JennyNeural",
+            "voice_config": {
+                "style": "Cheerful"
+            }
+        }
+    }
+}
+
+----------------
+
+example with actual api key 
+
+Username: U2FuZG1hbkBzZXNzaW9uLTQyLmNvbQ
+password: pwbWGxkTgr4fziFSjFO59
+
+example: 
+curl --request POST \
+     --url https://api.d-id.com/talks \
+     --header 'accept: application/json' \
+     --header 'authorization: Basic VTJGdVpHMWhia0J6WlhOemFXOXVMVFF5TG1OdmJROnB3YldHeGtUZ3I0ZnppRlNqRk81OQ==' \
+     --header 'content-type: application/json' \
+     --data '
+{
+  "source_url": "https://d-id-public-bucket.s3.us-west-2.amazonaws.com/alice.jpg",
+  "script": {
+    "type": "text",
+    "subtitles": "false",
+    "provider": {
+      "type": "microsoft",
+      "voice_id": "Sara"
+    },
+    "input": "Making videos is easy with D-ID",
+    "ssml": false
+  },
+  "config": {
+    "fluent": "false",
+    "pad_audio": "0.0"
+  }
+}
+'
+
+response: 
+
+{
+  "id": "tlk_LKU8PzcCPu3lY4gvyph2x",
+  "created_at": "2024-12-22T15:15:42.660Z",
+  "created_by": "google-oauth2|111391964151198354169",
+  "status": "created",
+  "object": "talk"
+}
+
+Create a talk
+post
+https://api.d-id.com/talks
+Recent Requests
+time	status	user agent	
+3m ago	
+201
+3m ago	
+201
+4m ago	
+401
+4 Requests This Month
+
+Body Params
+source_url
+string
+required
+Defaults to https://d-id-public-bucket.s3.us-west-2.amazonaws.com/alice.jpg
+The URL of the source image to be animated by the driver video, or a selection from the list of provided
+studio actors.
+
+https://d-id-public-bucket.s3.us-west-2.amazonaws.com/alice.jpg
+driver_url
+string
+The URL of the driver video to drive the talk, or a selection from the list or provided drivers
+If not provided a driver video will be selected for you from the predefined drivers bank
+
+script
+required
+
+TextScript
+Text script contains an input text to be spoken by the actor
+
+type
+string
+required
+The type of the script.
+
+
+text
+subtitles
+boolean
+Defaults to false
+Should subtitles be generated for this script
+
+
+false
+provider
+text-to-speech provider from list of supported providers. default is microsoft tts
+
+
+Microsoft_tts_provider
+AzureMicrosoft provider details, contains the provider type and requested voice id and style
+
+type
+string
+required
+
+microsoft
+voice_id
+string
+required
+Defaults to Sara
+The voice_id from the list of available voices.
+For full list of voice_ids: https://docs.d-id.com/reference//tts-microsoft
+
+Sara
+voice_config
+object
+Voice customization options
+
+
+voice_config object
+
+Elevenlabs_tts_provider
+
+Amazon_tts_provider
+
+Google_tts_provider
+
+PlayHT_tts_provider
+input
+string
+required
+length between 3 and 40000
+Defaults to Making videos is easy with D-ID
+The input text that will be synthesized to an audio file.
+Note that each provider has its own limitations on the text length.
+audio duration is further limited in streaming to 01:30 minutes
+
+Making videos is easy with D-ID
+ssml
+boolean
+Is the text provided in SSML form
+
+
+false
+
+AudioScript
+config
+object
+Advanced configuration options
+
+
+config object
+user_data
+string
+length between 1 and 500
+Non-sensitive custom data that will be added to the talk response and webhook
+
+name
+string
+The name of the talk video
+
+webhook
+string
+A webhook URL for sending the payload including animate details
+In a case of empty value, the webhook will not be triggered
+
+result_url
+string
+The URL of the talk video, if not provided use default destination.
+
+face
+object
+The face to animate - otherwise detects the face automatically
+
+
+face object
+persist
+boolean
+Whether the video should remain in storage without TTL.
+
+
+Headers
+x-api-key-external
+string
+It is possible to add external API key for TTS generation, to access the API programmatically. The x-api-key-external header must be added, the required value format is {"elevenlabs": "your-api-key"}. Note: Your ElevenLabs quota consumes. Example: x-api-key-external: "{"elevenlabs": "ABCDEFGH123456"}"
+
+Responses
+
+201
+Created
+
+Response body
+object
+id
+string
+required
+The ID of the talk
+
+object
+string
+required
+An identifier of this talk
+
+created_by
+string
+required
+The user id of the user that created the talk
+
+created_at
+string
+required
+Talk creation time as iso-8601 string
+
+status
+string
+required
+The status of the talk
+
+created done error started rejected
+
+
+400
+
+401
+AuthorizationError
+
+
+402
+InsufficientCreditsError
+
+
+403
+PermissionError
+
+
+451
+ImageModerationError | CelebrityRecognizedError | TextModerationError | AudioModerationError
+
+get talks: 
+
+curl --request GET \
+     --url 'https://api.d-id.com/talks?limit=100' \
+     --header 'accept: application/json' \
+     --header 'authorization: Basic VTJGdVpHMWhia0J6WlhOemFXOXVMVFF5TG1OdmJROnB3YldHeGtUZ3I0ZnppRlNqRk81OQ=='
+
+
+
+response: 
+
+{
+  "talks": [
+    {
+      "user": {
+        "features": [
+          "stitch",
+          "api-keys:write",
+          "clips:write",
+          "translation",
+          "scene",
+          "premium-plus:skip-speaker-validation",
+          null
+        ],
+        "stripe_customer_id": "cus_RQxxJypYVcXF9I",
+        "stripe_plan_group": "deid-lite",
+        "authorizer": "basic",
+        "owner_id": "google-oauth2|111391964151198354169",
+        "domain": "https://docs.d-id.com",
+        "id": "google-oauth2|111391964151198354169",
+        "plan": "deid-lite",
+        "email": "Sandman@session-42.com",
+        "stripe_price_id": "price_1NSbc5JxEKZ2zAynHAZNFOZz"
+      },
+      "script": {
+        "length": 31,
+        "subtitles": false,
+        "type": "text",
+        "provider": {
+          "type": "microsoft",
+          "voice_id": "Sara"
+        }
+      },
+      "metadata": {
+        "driver_url": "bank://natural/driver-4/original",
+        "mouth_open": false,
+        "num_faces": 1,
+        "num_frames": 63,
+        "processing_fps": 24.82760577545283,
+        "resolution": [
+          512,
+          512
+        ],
+        "size_kib": 495.9482421875
+      },
+      "audio_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_LKU8PzcCPu3lY4gvyph2x/microsoft.wav?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734966942&Signature=WNWmC%2BqFC0WAayFR8YsasA41aQA%3D",
+      "created_at": "2024-12-22T15:15:42.660Z",
+      "face": {
+        "mask_confidence": -1,
+        "detection": [
+          224,
+          198,
+          484,
+          552
+        ],
+        "overlap": "no",
+        "size": 512,
+        "top_left": [
+          98,
+          119
+        ],
+        "face_id": 0,
+        "detect_confidence": 0.9998352527618408
+      },
+      "config": {
+        "stitch": false,
+        "align_driver": true,
+        "sharpen": true,
+        "normalization_factor": 1,
+        "result_format": ".mp4",
+        "fluent": false,
+        "pad_audio": 0,
+        "reduce_noise": false,
+        "auto_match": true,
+        "show_watermark": false,
+        "logo": {
+          "url": "d-id-logo",
+          "position": [
+            0,
+            0
+          ]
+        },
+        "motion_factor": 1,
+        "align_expand_factor": 0.3
+      },
+      "source_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_LKU8PzcCPu3lY4gvyph2x/source/alice.jpg?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734966942&Signature=cAr0oqEi6pdqo8RFck43eGFIMsc%3D",
+      "created_by": "google-oauth2|111391964151198354169",
+      "status": "done",
+      "driver_url": "bank://natural/",
+      "modified_at": "2024-12-22T15:15:45.349Z",
+      "user_id": "google-oauth2|111391964151198354169",
+      "subtitles": false,
+      "id": "tlk_LKU8PzcCPu3lY4gvyph2x",
+      "duration": 3,
+      "started_at": "2024-12-22T15:15:42.704",
+      "result_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_LKU8PzcCPu3lY4gvyph2x/1734880542660.mp4?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734966945&Signature=sdxHeekX%2BR9c60tZtpI1Sqxj%2BGc%3D"
+    },
+    {
+      "user": {
+        "features": [
+          "stitch",
+          "api-keys:write",
+          "clips:write",
+          "translation",
+          "scene",
+          "premium-plus:skip-speaker-validation",
+          null
+        ],
+        "stripe_customer_id": "cus_RQxxJypYVcXF9I",
+        "stripe_plan_group": "deid-lite",
+        "authorizer": "basic",
+        "owner_id": "google-oauth2|111391964151198354169",
+        "domain": "https://docs.d-id.com",
+        "id": "google-oauth2|111391964151198354169",
+        "plan": "deid-lite",
+        "email": "Sandman@session-42.com",
+        "stripe_price_id": "price_1NSbc5JxEKZ2zAynHAZNFOZz"
+      },
+      "script": {
+        "length": 31,
+        "subtitles": false,
+        "type": "text",
+        "provider": {
+          "type": "microsoft",
+          "voice_id": "Sara"
+        }
+      },
+      "metadata": {
+        "driver_url": "bank://natural/driver-4/original",
+        "mouth_open": false,
+        "num_faces": 1,
+        "num_frames": 63,
+        "processing_fps": 25.323660498948467,
+        "resolution": [
+          512,
+          512
+        ],
+        "size_kib": 495.9482421875
+      },
+      "audio_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_4OCxPSh3JvVQ0EOycQ1F7/microsoft.wav?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734966931&Signature=FitOD7wTEg7LoHkt4FKwtTyoK58%3D",
+      "created_at": "2024-12-22T15:15:31.204Z",
+      "face": {
+        "mask_confidence": -1,
+        "detection": [
+          224,
+          198,
+          484,
+          552
+        ],
+        "overlap": "no",
+        "size": 512,
+        "top_left": [
+          98,
+          119
+        ],
+        "face_id": 0,
+        "detect_confidence": 0.9998352527618408
+      },
+      "config": {
+        "stitch": false,
+        "align_driver": true,
+        "sharpen": true,
+        "normalization_factor": 1,
+        "result_format": ".mp4",
+        "fluent": false,
+        "pad_audio": 0,
+        "reduce_noise": false,
+        "auto_match": true,
+        "show_watermark": false,
+        "logo": {
+          "url": "d-id-logo",
+          "position": [
+            0,
+            0
+          ]
+        },
+        "motion_factor": 1,
+        "align_expand_factor": 0.3
+      },
+      "source_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_4OCxPSh3JvVQ0EOycQ1F7/source/alice.jpg?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734966931&Signature=%2FBkbMN6hjjcj537zix8Dsutjaks%3D",
+      "created_by": "google-oauth2|111391964151198354169",
+      "status": "done",
+      "driver_url": "bank://natural/",
+      "modified_at": "2024-12-22T15:15:33.806Z",
+      "user_id": "google-oauth2|111391964151198354169",
+      "subtitles": false,
+      "id": "tlk_4OCxPSh3JvVQ0EOycQ1F7",
+      "duration": 3,
+      "started_at": "2024-12-22T15:15:31.263",
+      "result_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_4OCxPSh3JvVQ0EOycQ1F7/1734880531204.mp4?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734966933&Signature=vHP8EpY4Hq6ZeC7yCzukQHcIC7c%3D"
+    },
+    {
+      "user": {
+        "features": [
+          "stitch",
+          "api-keys:write",
+          "clips:write",
+          "translation",
+          "scene",
+          "premium-plus:skip-speaker-validation",
+          null
+        ],
+        "stripe_customer_id": "cus_RQxxJypYVcXF9I",
+        "stripe_plan_group": "deid-lite",
+        "authorizer": "basic",
+        "owner_id": "google-oauth2|111391964151198354169",
+        "id": "google-oauth2|111391964151198354169",
+        "plan": "deid-lite",
+        "email": "Sandman@session-42.com",
+        "stripe_price_id": "price_1NSbc5JxEKZ2zAynHAZNFOZz"
+      },
+      "script": {
+        "length": 82,
+        "subtitles": false,
+        "type": "text",
+        "provider": {
+          "type": "microsoft",
+          "voice_id": "en-US-JennyNeural"
+        }
+      },
+      "metadata": {
+        "driver_url": "bank://natural/driver-4/original",
+        "mouth_open": false,
+        "num_faces": 1,
+        "num_frames": 127,
+        "processing_fps": 43.057663704728846,
+        "resolution": [
+          512,
+          512
+        ],
+        "size_kib": 1053.3779296875
+      },
+      "audio_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_M3wWbqgEuayzLajNFAK27/microsoft.wav?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962902&Signature=FrZ%2B9vRGaTcRtrNkyqWmeZlPUno%3D",
+      "created_at": "2024-12-22T14:08:22.905Z",
+      "face": {
+        "mask_confidence": -1,
+        "detection": [
+          224,
+          198,
+          484,
+          552
+        ],
+        "overlap": "no",
+        "size": 512,
+        "top_left": [
+          98,
+          119
+        ],
+        "face_id": 0,
+        "detect_confidence": 0.9998352527618408
+      },
+      "config": {
+        "stitch": false,
+        "align_driver": true,
+        "sharpen": true,
+        "normalization_factor": 1,
+        "result_format": ".mp4",
+        "fluent": false,
+        "pad_audio": 0,
+        "reduce_noise": false,
+        "auto_match": true,
+        "show_watermark": false,
+        "logo": {
+          "url": "d-id-logo",
+          "position": [
+            0,
+            0
+          ]
+        },
+        "motion_factor": 1,
+        "align_expand_factor": 0.3
+      },
+      "source_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_M3wWbqgEuayzLajNFAK27/source/alice.jpg?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962902&Signature=iIY4i21LnAybsYIcuNXv2Ws4AaY%3D",
+      "created_by": "google-oauth2|111391964151198354169",
+      "status": "done",
+      "driver_url": "bank://natural/",
+      "modified_at": "2024-12-22T14:08:26.001Z",
+      "user_id": "google-oauth2|111391964151198354169",
+      "subtitles": false,
+      "id": "tlk_M3wWbqgEuayzLajNFAK27",
+      "duration": 6,
+      "started_at": "2024-12-22T14:08:22.948",
+      "result_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_M3wWbqgEuayzLajNFAK27/1734876502905.mp4?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962906&Signature=ZwY0Iv%2Ba3l5h7zBLE2sfH%2BVy8jQ%3D"
+    },
+    {
+      "user": {
+        "features": [
+          "stitch",
+          "api-keys:write",
+          "clips:write",
+          "translation",
+          "scene",
+          "premium-plus:skip-speaker-validation",
+          null
+        ],
+        "stripe_customer_id": "cus_RQxxJypYVcXF9I",
+        "stripe_plan_group": "deid-lite",
+        "authorizer": "basic",
+        "owner_id": "google-oauth2|111391964151198354169",
+        "id": "google-oauth2|111391964151198354169",
+        "plan": "deid-lite",
+        "email": "Sandman@session-42.com",
+        "stripe_price_id": "price_1NSbc5JxEKZ2zAynHAZNFOZz"
+      },
+      "script": {
+        "length": 82,
+        "subtitles": false,
+        "type": "text",
+        "provider": {
+          "type": "microsoft",
+          "voice_id": "en-US-JennyNeural"
+        }
+      },
+      "metadata": {
+        "driver_url": "bank://natural/driver-4/original",
+        "mouth_open": false,
+        "num_faces": 1,
+        "num_frames": 127,
+        "processing_fps": 42.992115855289214,
+        "resolution": [
+          512,
+          512
+        ],
+        "size_kib": 1053.3779296875
+      },
+      "audio_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_vTGlNtWp_ORGQnDHP9N35/microsoft.wav?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962901&Signature=Iw5D%2B9SLuDRyxwkZmw26rtDqQUY%3D",
+      "created_at": "2024-12-22T14:08:21.826Z",
+      "face": {
+        "mask_confidence": -1,
+        "detection": [
+          224,
+          198,
+          484,
+          552
+        ],
+        "overlap": "no",
+        "size": 512,
+        "top_left": [
+          98,
+          119
+        ],
+        "face_id": 0,
+        "detect_confidence": 0.9998352527618408
+      },
+      "config": {
+        "stitch": false,
+        "align_driver": true,
+        "sharpen": true,
+        "normalization_factor": 1,
+        "result_format": ".mp4",
+        "fluent": false,
+        "pad_audio": 0,
+        "reduce_noise": false,
+        "auto_match": true,
+        "show_watermark": false,
+        "logo": {
+          "url": "d-id-logo",
+          "position": [
+            0,
+            0
+          ]
+        },
+        "motion_factor": 1,
+        "align_expand_factor": 0.3
+      },
+      "source_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_vTGlNtWp_ORGQnDHP9N35/source/alice.jpg?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962901&Signature=NoSqQxFru3XopF2Iu5C9uj3HKMI%3D",
+      "created_by": "google-oauth2|111391964151198354169",
+      "status": "done",
+      "driver_url": "bank://natural/",
+      "modified_at": "2024-12-22T14:08:24.921Z",
+      "user_id": "google-oauth2|111391964151198354169",
+      "subtitles": false,
+      "id": "tlk_vTGlNtWp_ORGQnDHP9N35",
+      "duration": 6,
+      "started_at": "2024-12-22T14:08:21.873",
+      "result_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_vTGlNtWp_ORGQnDHP9N35/1734876501826.mp4?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962904&Signature=U%2B8wh43%2FijGIq2zF0dwxnDmdfWk%3D"
+    },
+    {
+      "user": {
+        "features": [
+          "stitch",
+          "api-keys:write",
+          "clips:write",
+          "translation",
+          "scene",
+          "premium-plus:skip-speaker-validation",
+          null
+        ],
+        "stripe_customer_id": "cus_RQxxJypYVcXF9I",
+        "stripe_plan_group": "deid-lite",
+        "authorizer": "basic",
+        "owner_id": "google-oauth2|111391964151198354169",
+        "id": "google-oauth2|111391964151198354169",
+        "plan": "deid-lite",
+        "email": "Sandman@session-42.com",
+        "stripe_price_id": "price_1NSbc5JxEKZ2zAynHAZNFOZz"
+      },
+      "script": {
+        "length": 82,
+        "subtitles": false,
+        "type": "text",
+        "provider": {
+          "type": "microsoft",
+          "voice_id": "en-US-JennyNeural"
+        }
+      },
+      "metadata": {
+        "driver_url": "bank://natural/driver-4/original",
+        "mouth_open": false,
+        "num_faces": 1,
+        "num_frames": 127,
+        "processing_fps": 43.14600267573163,
+        "resolution": [
+          512,
+          512
+        ],
+        "size_kib": 1053.3779296875
+      },
+      "audio_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_lhsIYeC9CBctNBeewmP1C/microsoft.wav?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962899&Signature=vMN%2Bd7H7UHt%2BwvG3A7gX5%2FdgQp8%3D",
+      "created_at": "2024-12-22T14:08:19.731Z",
+      "face": {
+        "mask_confidence": -1,
+        "detection": [
+          224,
+          198,
+          484,
+          552
+        ],
+        "overlap": "no",
+        "size": 512,
+        "top_left": [
+          98,
+          119
+        ],
+        "face_id": 0,
+        "detect_confidence": 0.9998352527618408
+      },
+      "config": {
+        "stitch": false,
+        "align_driver": true,
+        "sharpen": true,
+        "normalization_factor": 1,
+        "result_format": ".mp4",
+        "fluent": false,
+        "pad_audio": 0,
+        "reduce_noise": false,
+        "auto_match": true,
+        "show_watermark": false,
+        "logo": {
+          "url": "d-id-logo",
+          "position": [
+            0,
+            0
+          ]
+        },
+        "motion_factor": 1,
+        "align_expand_factor": 0.3
+      },
+      "source_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_lhsIYeC9CBctNBeewmP1C/source/alice.jpg?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962899&Signature=2cIySCg%2BbOEwt8kPV4AJNoDF5Uw%3D",
+      "created_by": "google-oauth2|111391964151198354169",
+      "status": "done",
+      "driver_url": "bank://natural/",
+      "modified_at": "2024-12-22T14:08:22.801Z",
+      "user_id": "google-oauth2|111391964151198354169",
+      "subtitles": false,
+      "id": "tlk_lhsIYeC9CBctNBeewmP1C",
+      "duration": 6,
+      "started_at": "2024-12-22T14:08:19.768",
+      "result_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_lhsIYeC9CBctNBeewmP1C/1734876499731.mp4?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962902&Signature=LVFFnhCuvd%2FRHQxhESB8ecFBsR4%3D"
+    },
+    {
+      "user": {
+        "features": [
+          "stitch",
+          "api-keys:write",
+          "clips:write",
+          "translation",
+          "scene",
+          "premium-plus:skip-speaker-validation",
+          null
+        ],
+        "stripe_customer_id": "cus_RQxxJypYVcXF9I",
+        "stripe_plan_group": "deid-lite",
+        "authorizer": "basic",
+        "owner_id": "google-oauth2|111391964151198354169",
+        "id": "google-oauth2|111391964151198354169",
+        "plan": "deid-lite",
+        "email": "Sandman@session-42.com",
+        "stripe_price_id": "price_1NSbc5JxEKZ2zAynHAZNFOZz"
+      },
+      "script": {
+        "length": 82,
+        "subtitles": false,
+        "type": "text",
+        "provider": {
+          "type": "microsoft",
+          "voice_id": "en-US-JennyNeural"
+        }
+      },
+      "metadata": {
+        "driver_url": "bank://natural/driver-4/original",
+        "mouth_open": false,
+        "num_faces": 1,
+        "num_frames": 127,
+        "processing_fps": 42.99445913139682,
+        "resolution": [
+          512,
+          512
+        ],
+        "size_kib": 1053.3779296875
+      },
+      "audio_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_vREizaT6eaV6o6_Fk6tG0/microsoft.wav?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962898&Signature=bJ3gxR8gKT0Y%2BAtQTQ5as4HLTH0%3D",
+      "created_at": "2024-12-22T14:08:18.742Z",
+      "face": {
+        "mask_confidence": -1,
+        "detection": [
+          224,
+          198,
+          484,
+          552
+        ],
+        "overlap": "no",
+        "size": 512,
+        "top_left": [
+          98,
+          119
+        ],
+        "face_id": 0,
+        "detect_confidence": 0.9998352527618408
+      },
+      "config": {
+        "stitch": false,
+        "align_driver": true,
+        "sharpen": true,
+        "normalization_factor": 1,
+        "result_format": ".mp4",
+        "fluent": false,
+        "pad_audio": 0,
+        "reduce_noise": false,
+        "auto_match": true,
+        "show_watermark": false,
+        "logo": {
+          "url": "d-id-logo",
+          "position": [
+            0,
+            0
+          ]
+        },
+        "motion_factor": 1,
+        "align_expand_factor": 0.3
+      },
+      "source_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_vREizaT6eaV6o6_Fk6tG0/source/alice.jpg?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962898&Signature=NwXqqH3UCRFkmLmfhUdaa4tM84k%3D",
+      "created_by": "google-oauth2|111391964151198354169",
+      "status": "done",
+      "driver_url": "bank://natural/",
+      "modified_at": "2024-12-22T14:08:21.865Z",
+      "user_id": "google-oauth2|111391964151198354169",
+      "subtitles": false,
+      "id": "tlk_vREizaT6eaV6o6_Fk6tG0",
+      "duration": 6,
+      "started_at": "2024-12-22T14:08:18.780",
+      "result_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_vREizaT6eaV6o6_Fk6tG0/1734876498742.mp4?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962901&Signature=Da%2Fhqo9YeKMRpwH8FN6Yx8sAZ1I%3D"
+    },
+    {
+      "user": {
+        "features": [
+          "stitch",
+          "api-keys:write",
+          "clips:write",
+          "translation",
+          "scene",
+          "premium-plus:skip-speaker-validation",
+          null
+        ],
+        "stripe_customer_id": "cus_RQxxJypYVcXF9I",
+        "stripe_plan_group": "deid-lite",
+        "authorizer": "basic",
+        "owner_id": "google-oauth2|111391964151198354169",
+        "id": "google-oauth2|111391964151198354169",
+        "plan": "deid-lite",
+        "email": "Sandman@session-42.com",
+        "stripe_price_id": "price_1NSbc5JxEKZ2zAynHAZNFOZz"
+      },
+      "script": {
+        "length": 82,
+        "subtitles": false,
+        "type": "text",
+        "provider": {
+          "type": "microsoft",
+          "voice_id": "en-US-JennyNeural"
+        }
+      },
+      "metadata": {
+        "driver_url": "bank://natural/driver-4/original",
+        "mouth_open": false,
+        "num_faces": 1,
+        "num_frames": 127,
+        "processing_fps": 43.1868347484673,
+        "resolution": [
+          512,
+          512
+        ],
+        "size_kib": 1053.3779296875
+      },
+      "audio_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_B_n2OuYuKJxj_IF2kyW_b/microsoft.wav?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962896&Signature=%2F2G99IJX2RUepKAyOmmEIfBMlTY%3D",
+      "created_at": "2024-12-22T14:08:16.330Z",
+      "face": {
+        "mask_confidence": -1,
+        "detection": [
+          224,
+          198,
+          484,
+          552
+        ],
+        "overlap": "no",
+        "size": 512,
+        "top_left": [
+          98,
+          119
+        ],
+        "face_id": 0,
+        "detect_confidence": 0.9998352527618408
+      },
+      "config": {
+        "stitch": false,
+        "align_driver": true,
+        "sharpen": true,
+        "normalization_factor": 1,
+        "result_format": ".mp4",
+        "fluent": false,
+        "pad_audio": 0,
+        "reduce_noise": false,
+        "auto_match": true,
+        "show_watermark": false,
+        "logo": {
+          "url": "d-id-logo",
+          "position": [
+            0,
+            0
+          ]
+        },
+        "motion_factor": 1,
+        "align_expand_factor": 0.3
+      },
+      "source_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_B_n2OuYuKJxj_IF2kyW_b/source/alice.jpg?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962896&Signature=aLuIq507jBpeOsAIONu6es4SEYM%3D",
+      "created_by": "google-oauth2|111391964151198354169",
+      "status": "done",
+      "driver_url": "bank://natural/",
+      "modified_at": "2024-12-22T14:08:19.445Z",
+      "user_id": "google-oauth2|111391964151198354169",
+      "subtitles": false,
+      "id": "tlk_B_n2OuYuKJxj_IF2kyW_b",
+      "duration": 6,
+      "started_at": "2024-12-22T14:08:16.376",
+      "result_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_B_n2OuYuKJxj_IF2kyW_b/1734876496330.mp4?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962899&Signature=hnbhWPKBSJwn5HlkZZ1U6JvIRnc%3D"
+    },
+    {
+      "user": {
+        "features": [
+          "stitch",
+          "api-keys:write",
+          "clips:write",
+          "translation",
+          "scene",
+          "premium-plus:skip-speaker-validation",
+          null
+        ],
+        "stripe_customer_id": "cus_RQxxJypYVcXF9I",
+        "stripe_plan_group": "deid-lite",
+        "authorizer": "basic",
+        "owner_id": "google-oauth2|111391964151198354169",
+        "id": "google-oauth2|111391964151198354169",
+        "plan": "deid-lite",
+        "email": "Sandman@session-42.com",
+        "stripe_price_id": "price_1NSbc5JxEKZ2zAynHAZNFOZz"
+      },
+      "script": {
+        "length": 82,
+        "subtitles": false,
+        "type": "text",
+        "provider": {
+          "type": "microsoft",
+          "voice_id": "en-US-JennyNeural"
+        }
+      },
+      "metadata": {
+        "driver_url": "bank://natural/driver-4/original",
+        "mouth_open": false,
+        "num_faces": 1,
+        "num_frames": 127,
+        "processing_fps": 42.95954023144029,
+        "resolution": [
+          512,
+          512
+        ],
+        "size_kib": 1053.3779296875
+      },
+      "audio_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_ZI3KyADnthKpi8_H6iJu6/microsoft.wav?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962896&Signature=wirMSw%2BQ6KaN%2B%2BCkgUvOOT1fqGM%3D",
+      "created_at": "2024-12-22T14:08:16.154Z",
+      "face": {
+        "mask_confidence": -1,
+        "detection": [
+          224,
+          198,
+          484,
+          552
+        ],
+        "overlap": "no",
+        "size": 512,
+        "top_left": [
+          98,
+          119
+        ],
+        "face_id": 0,
+        "detect_confidence": 0.9998352527618408
+      },
+      "config": {
+        "stitch": false,
+        "align_driver": true,
+        "sharpen": true,
+        "normalization_factor": 1,
+        "result_format": ".mp4",
+        "fluent": false,
+        "pad_audio": 0,
+        "reduce_noise": false,
+        "auto_match": true,
+        "show_watermark": false,
+        "logo": {
+          "url": "d-id-logo",
+          "position": [
+            0,
+            0
+          ]
+        },
+        "motion_factor": 1,
+        "align_expand_factor": 0.3
+      },
+      "source_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_ZI3KyADnthKpi8_H6iJu6/source/alice.jpg?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962896&Signature=R1mx3Fd7dFJlaub5X35whjCmNdk%3D",
+      "created_by": "google-oauth2|111391964151198354169",
+      "status": "done",
+      "driver_url": "bank://natural/",
+      "modified_at": "2024-12-22T14:08:19.225Z",
+      "user_id": "google-oauth2|111391964151198354169",
+      "subtitles": false,
+      "id": "tlk_ZI3KyADnthKpi8_H6iJu6",
+      "duration": 6,
+      "started_at": "2024-12-22T14:08:16.201",
+      "result_url": "https://d-id-talks-prod.s3.us-west-2.amazonaws.com/google-oauth2%7C111391964151198354169/tlk_ZI3KyADnthKpi8_H6iJu6/1734876496154.mp4?AWSAccessKeyId=AKIA5CUMPJBIK65W6FGA&Expires=1734962899&Signature=gbwS0W6MT%2Fxssm9m%2FPjwgarE020%3D"
+    }
+  ]
+}
+
+get a specific talk
+
+curl --request GET \
+     --url https://api.d-id.com/talks/id \
+     --header 'accept: application/json' \
+     --header 'authorization: Basic VTJGdVpHMWhia0J6WlhOemFXOXVMVFF5TG1OdmJROnB3YldHeGtUZ3I0ZnppRlNqRk81OQ=='
+
+     
+
+
+
+
+example code: 
+
+curl --request POST \
+     --url https://api.d-id.com/talks \
+     --header 'accept: application/json' \
+     --header 'content-type: application/json' \
+     --data '
+{
+  "source_url": "https://path.to.directory/image.jpg",
+  "script": {
+    "type": "text",
+    "subtitles": true,
+    "provider": {
+      "type": "microsoft",
+      "voice_id": "Sara",
+      "voice_config": {
+        "style": "string",
+        "rate": "0.5",
+        "pitch": "+2st"
+      }
+    },
+    "input": "Making videos is easy with D-ID",
+    "ssml": true
+  },
+  "config": {
+    "logo": {
+      "position": [
+        0,
+        500
+      ],
+      "url": "string"
+    },
+    "fluent": true,
+    "pad_audio": 0,
+    "driver_expressions": {
+      "expressions": [
+        {
+          "start_frame": 0,
+          "expression": "neutral",
+          "intensity": 0
+        }
+      ],
+      "transition_frames": 0
+    },
+    "align_driver": true,
+    "align_expand_factor": 0,
+    "auto_match": true,
+    "motion_factor": 0,
+    "normalization_factor": 0,
+    "sharpen": true,
+    "stitch": true,
+    "result_format": "mp4",
+    "output_resolution": 512
+  },
+  "face": {
+    "top_left": [
+      0,
+      0
+    ],
+    "size": 512
+  },
+  "driver_url": "bank://natural",
+  "user_data": "string",
+  "name": "string",
+  "webhook": "https://host.domain.tld/to/webhook",
+  "result_url": "https://path.to.directory/",
+  "persist": true
+}
+'
+
+{
+  "id": "tlk_AbCs-xcz",
+  "object": "talk",
+  "created_at": "2020-09-03T13:56:54.995",
+  "created_by": "123",
+  "status": "created"
+}
+
