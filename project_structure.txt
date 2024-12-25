@@ -1,0 +1,141 @@
+Interview Platform project structure 
+
+
+
+
+
+interview-platform/
+│
+├── backend/
+│ ├── alembic/ # Database migration directory
+│ │ └── versions/ # Migration version files
+│ │
+│ ├── app/
+│ │ ├── init.py # Makes app directory a Python package
+│ │ ├── main.py # FastAPI application entry point
+│ │ │
+│ │ ├── api/
+│ │ │ ├── init.py
+│ │ │ ├── interviews.py # Interview session endpoints
+│ │ │ ├── questions.py # Question management endpoints
+│ │ │ └── recordings.py # Video recording handling endpoints
+│ │ │
+│ │ ├── core/
+│ │ │ ├── config.py # Application configuration
+│ │ │ ├── security.py # URL generation and security functions
+│ │ │ └── events.py # Startup and shutdown events
+│ │ │
+│ │ ├── db/
+│ │ │ ├── base.py # Database base configuration
+│ │ │ ├── models.py # SQLAlchemy models
+│ │ │ └── session.py # Database session management
+│ │ │
+│ │ ├── services/
+│ │ │ ├── did_service.py # D-ID API integration
+│ │ │ ├── storage.py # Video storage management
+│ │ │ └── transcription.py # Transcription service integration
+│ │ │
+│ │ └── schemas/
+│ │ ├── interview.py # Interview Pydantic models
+│ │ ├── question.py # Question Pydantic models
+│ │ └── recording.py # Recording Pydantic models
+│ │
+│ ├── tests/
+│ │ ├── conftest.py # Test configuration and fixtures
+│ │ ├── test_api/ # API endpoint tests
+│ │ └── test_services/ # Service layer tests
+│ │
+│ ├── requirements.txt # Python dependencies
+│ └── Dockerfile # Backend container configuration
+│
+├── frontend/
+│ ├── public/
+│ │ ├── index.html # HTML entry point
+│ │ └── assets/ # Static assets
+│ │
+│ ├── src/
+│ │ ├── App.tsx # Root React component
+│ │ ├── index.tsx # Application entry point
+│ │ │
+│ │ ├── components/
+│ │ │ ├── AdminPanel/
+│ │ │ │ ├── QuestionForm.tsx # Question management interface
+│ │ │ │ └── QuestionList.tsx # List of interview questions
+│ │ │ │
+│ │ │ ├── Interview/
+│ │ │ │ ├── AvatarView.tsx # D-ID avatar display
+│ │ │ │ ├── RecordingBox.tsx # Video recording interface
+│ │ │ │ ├── ProgressBar.tsx # Interview progress indicator
+│ │ │ │ └── ReviewPanel.tsx # Recording review interface
+│ │ │ │
+│ │ │ └── common/
+│ │ │ ├── Button.tsx # Reusable button component
+│ │ │ ├── VideoPlayer.tsx # Custom video player
+│ │ │ └── Loading.tsx # Loading states
+│ │ │
+│ │ ├── hooks/
+│ │ │ ├── useRecording.ts # Video recording logic
+│ │ │ ├── useInterview.ts # Interview state management
+│ │ │ └── useAvatar.ts # D-ID avatar control
+│ │ │
+│ │ ├── services/
+│ │ │ ├── api.ts # Backend API client
+│ │ │ └── storage.ts # Local storage management
+│ │ │
+│ │ ├── types/
+│ │ │ └── index.ts # TypeScript type definitions
+│ │ │
+│ │ └── utils/
+│ │ ├── video.ts # Video processing utilities
+│ │ └── validation.ts # Input validation functions
+│ │
+│ ├── package.json # Frontend dependencies
+│ ├── tsconfig.json # TypeScript configuration
+│ └── Dockerfile # Frontend container configuration
+│
+├── docker-compose.yml # Container orchestration
+├── .env.example # Environment variables template
+├── .gitignore # Git ignore rules
+└── README.md # Project documentation
+
+
+
+Each directory serves a specific purpose:
+
+
+
+
+
+backend/ handles all server-side logic, data processing, and external service integrations
+
+
+
+frontend/ contains the React application for the user interface
+
+
+
+Configuration files at the root level handle project-wide settings and deployment
+
+The structure follows a modular approach where:
+
+
+
+
+
+Business logic is separated from API endpoints
+
+
+
+Components are organized by feature
+
+
+
+Common utilities and types are shared across the application
+
+
+
+Testing infrastructure is included from the start
+
+
+
+Configuration is externalized for different environments

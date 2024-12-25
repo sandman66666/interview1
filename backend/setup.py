@@ -1,0 +1,36 @@
+from setuptools import setup, find_packages
+
+setup(
+    name="interview-platform",
+    version="0.1.0",
+    packages=find_packages(),
+    install_requires=[
+        "fastapi>=0.109.1",
+        "uvicorn>=0.27.0",
+        "sqlalchemy>=2.0.25",
+        "alembic>=1.13.1",
+        "python-dotenv>=1.0.0",
+        "pydantic>=2.6.1",
+        "pydantic-settings>=2.1.0",
+        "asyncpg>=0.29.0",
+        "python-jose>=3.3.0",
+        "python-multipart>=0.0.6",
+        "boto3>=1.34.14",
+        "pytest>=7.4.4",
+        "httpx>=0.26.0",
+        "uuid>=1.30",
+        "openai>=1.12.0",
+        "python-magic>=0.4.27",
+        "moviepy>=1.0.3",
+        "aiofiles>=23.2.1",
+        "requests>=2.31.0",
+        "passlib>=1.7.4",
+        "bcrypt>=4.1.2",
+        "tenacity>=8.2.3",
+        "python-slugify>=8.0.4",
+        "pillow>=10.2.0",
+        "ffmpeg-python>=0.2.0",
+        "email-validator>=2.1.0.post1"
+    ],
+    python_requires=">=3.11",
+)

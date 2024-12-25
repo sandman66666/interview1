@@ -1,0 +1,2 @@
+This is a remix project using shadcn and tailwindcss, framer motion, it's currently got everything configured and ready to go.
+If you need an sqlite database you have following env items: KODU_DB_HOST KODU_DB_PASSWORD
